@@ -212,3 +212,41 @@ kubectl delete pod <name of redis-cache-… pod>
 A new pod will be started after a few seconds and the old one terminated. When we then access the microservice requestcounter, the inevitable has happened: a counter reset. The old value was lost when the Redis cache pod was terminated:
 
 
+
+# Resources
+
+See: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services---service-types on services in Kubernetes
+
+Port forwarding from host to Redis Pod: https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/
+
+Rolling updates with K8s deployment: https://tachingchen.com/blog/Kubernetes-Rolling-Update-with-Deployment/
+
+Graceful shutdown of pods: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html 
+
+
+## Useful Kubectl commands
+To see the logs from a specific pod:
+```
+kubectl logs <name of pod>
+```
+
+To open a shell in the running container in a pod with only one container (see: https://kubernetes.io/docs/tasks/debug-application-cluster/get-shell-running-container/) :
+
+```
+kubectl exec –it <name of pod> -- bash   
+```
+Type exit in the shell to return.
+
+Run a command in the container in a Pod:
+
+```
+kubectl exec <name of pod> command
+```
+
+To open a shell in a running container in a pod with multiple containers:
+
+```
+kubectl exec –it <name of pod> -c <name of container> -- bash
+```
+
+See the API reference for Kubectl exec for more details: https://kubernetes.io/docs/user-guide/kubectl/v1.6/#exec   
