@@ -13,22 +13,22 @@ spec:
     spec:
       containers:
       - name: request-counter-ms
-        # get latest version of image
         image: lucasjellema/node-app-runner
         imagePullPolicy: IfNotPresent
         env:
-          - name: GIT_URL
-            value: "https://github.com/lucasjellema/microservices-choreography-kubernetes-workshop-june2017"
-          - name: APP_PORT
-            value: "8091"
-          - name: APP_HOME
-            value: "part1"
-          - name: APP_STARTUP
-            value: "requestCounter-4.js"
-          - name: REDIS_HOST
-            value: "redis-cache"
-          - name: REDIS_PORT
-            value: "6379"
+        - name: GIT_URL
+          value: "https://github.com/lucasjellema/2019-fontys-business-and-IT-agility-through-microservice-architecture"
+        - name: APP_PORT
+          value: "8091"
+        - name: APP_HOME
+          value: "1-node"
+        - name: APP_STARTUP
+          value: "requestCounter-3.js"
+        - name: REDIS_HOST
+          value: "redis-cache"
+        - name: REDIS_PORT
+          value: "6379"
         ports:
         # containerPort is the port exposed by the container (where nodejs is listening for http requests)
-          - containerPort: 8091
+        - containerPort: 8091
+          name: appl-port
