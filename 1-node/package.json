@@ -1,8 +1,8 @@
 {
   "name": "request-counter",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Node.js application accepst GET requests and returns a count of the number of requests",
-  "main": "$APP_STARTUP",
+  "main": "requestCounter.js",
   "scripts": {
     "start": "node $APP_STARTUP",
     "test": "echo \"Error: no test specified\" && exit 1"
