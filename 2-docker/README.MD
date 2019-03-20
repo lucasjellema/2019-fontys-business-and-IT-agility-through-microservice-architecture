@@ -1,6 +1,6 @@
 # RequestCounter Node application in Docker Run Time on Linux
 
-Open Katacoda's Node Playground environment at: [Katacode Docker Playground](https://www.katacoda.com/courses/docker/playground)
+Open Katacoda's Docker Playground environment at: [Katacode Docker Playground](https://www.katacoda.com/courses/docker/playground)
 
 ## Retrieve application resources
 In the terminal window, git clone the workshop GitHub repo with 
