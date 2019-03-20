@@ -70,6 +70,8 @@ curl minikube:<[port assigned to service]>
 ```
 or: From the Plus sign in the tab menu for the editor, *Select Port to View on Host 1*  and enter the port assigned to the service. 
 
+Note: the initial Pod creation can take up to 90 seconds - because the container image has to be downloaded to the K8S cluster.
+
 In both cases, you will see the response from the Node application running in the container inside the Pod exposed by the Service on the Kubernetes cluster.
 
 
@@ -145,7 +147,68 @@ Now once more access the microservice a few times, using curl. The value 1 is ob
 
 
 ## Adding a Cache to the Microservices Platform and running a Stateless version of RequestCounter
+Just as we did in he hands on section with Docker, we will bring in Redis to be the cross Pod shared memory or state-holder, allowing our application to be stateless and horizontally scalable. 
 
+Create a new pod with Redis in it
 
-
+```
 kubectl run redis-cache --image=redis --port=6379
+```
+This downloads the container image for Redis and creates and starts a Pod based on it.
+
+Expose Redis within cluster to make it available to other Pods:
+```
+kubectl expose deployment redis-cache --type=ClusterIP
+```
+
+From the command line we can inspect the services exposed on our minikube cluster:
+```
+kubectl get svc
+```
+
+including the new Redis service and its IP address within the cluster.
+
+The hostname for the Redis cache service inside the cluster is redis-cache and the port is 6379 – at this endpoint, other pods in the cluster can access the service.
+
+Upgrade deployment RequestCounter to version with Redis backing. V3: no lock, v4: optimistic lock
+
+```
+kubectl apply -f deployment-v2.yaml --record
+```
+
+Check on the status of the rollout of the change:
+
+```
+kubectl rollout status deployment request-counter-ms-deployment
+```
+
+We can inspect the history of a specific deployment and see which changes have been applied to it:
+
+```
+kubectl rollout history deployment request-counter-ms-deployment
+```
+
+In the dashboard, if we are quick we can see the pods being restarted. If we are not so fast, we can see both pods running (again) – having been restarted fairly recently. Both Pods are running again, from the logs you can tell that both are running the new version of the application – powered by Redis.
+
+And from the command line we can do the curl thing a few times: 
+curl minikube:<port exposed by service>
+ 
+This time round, we do not get two counters incrementing in the background. Just a single incrementing value. And supposedly, that value is stored in the Redis cache where both instances access and manipulate it. That should mean that we can stop and (re)start one or even both pods and then continue with the count as though nothing happened. Let’s try that out. Stop one of the pods on the commandline with kubectl or in the dashboard. Note: get the name of the Pod in your case from either the command line using kubectl get pods or through the dashboard.
+
+```
+kubectl delete pod request-counter-ms-deployment-68346987-qxv6v --grace-period=60
+```
+
+In the dashboard we can see how a new pod is started – because in the deployment we specified 2 replicas to always be running. A little bit later the Pod we asked to have deleted is gone. We can also delete our other pod, to be sure any state lingering in the original pods is gone
+
+Again, we see a new pod running and the old instance being terminated. At this point, both original pods are gone. If we access the request counter microservice, we will find that the counting continues where it had left off.
+
+Of course now we have moved the burden of state to the Redis pod. If we restart that pod, we will get a reset in the counter value, because currently the cache is not persisted outside the container and its contents vanishes when the container dies. Note that we can have Redis be persisted to files outside container.
+
+```
+kubectl delete pod <name of redis-cache-… pod>
+```
+
+A new pod will be started after a few seconds and the old one terminated. When we then access the microservice requestcounter, the inevitable has happened: a counter reset. The old value was lost when the Redis cache pod was terminated:
+
+
