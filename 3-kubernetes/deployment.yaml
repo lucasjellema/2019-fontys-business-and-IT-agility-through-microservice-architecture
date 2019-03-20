@@ -21,7 +21,7 @@ spec:
           value: "https://github.com/lucasjellema/2019-fontys-business-and-IT-agility-through-microservice-architecture"
         - name: APP_PORT
           value: "8091"
-        - name: APPLICATION_ROOT_DIRECTORY
+        - name: APP_HOME
           value: "1-node"
         - name: APP_STARTUP
           value: "requestCounter-2.js"
