@@ -176,4 +176,4 @@ You can now invoke this second incarnation of version 3 of Request Counter:
 ```
 curl docker:3012
 ```
-Even though this container has only just been started and never been invoked before, it returns a number greater than 1. Again, the cache in action.
+Even though this container has only just been started and never been invoked before, it returns a number greater than 1. Again, we see the cache in action.
