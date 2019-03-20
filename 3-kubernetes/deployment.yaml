@@ -14,7 +14,7 @@ spec:
       containers:
       - name: request-counter-ms
         # get latest version of image
-        image: lucasjellema/node-run-live-reload:0.4.3
+        image: lucasjellema/node-app-runner
         imagePullPolicy: IfNotPresent
         env:
         - name: GIT_URL
@@ -28,4 +28,4 @@ spec:
         ports:
         # containerPort is the port exposed by the container (where nodejs is listening for http requests)
         - containerPort: 8091
-          name: applicationPort
+          name: appl-port
