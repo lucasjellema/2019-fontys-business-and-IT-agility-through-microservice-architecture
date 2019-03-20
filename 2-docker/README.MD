@@ -126,3 +126,54 @@ curl docker:3006
 The response should be *Request Count: 1* . Regardless of what the count was before you stopped the container. This tells us something about where the count was kept by the application, does it not?
 
 Stopping and starting a container loses its memory state and retains the file system contents. 
+
+## Version 3 - Redis Memory Cache
+
+We can run a Redis in memory cache in a Docker container using this simple statement:
+```
+docker network create redis-net
+
+docker run --name redis --network redis-net redis
+```
+This will start up a new container with a Redis instance inside.
+
+Check with `docker ps` in a new terminal window if the container is running and which port it has exposed.
+
+Version 3 of the request counter application is prepared for Redis. That means that it will store the count of the number of requests in the cache rather than in the memory of the container itself. And that should mean that that value can survive container restarts. And that it could be shared potentially by multiple instances of the application.
+
+```
+docker run --name request-counter-v3 -p 3010:3001 -p 4504:4500 --network redis-net -e APPLICATION_ROOT_DIRECTORY=1-node  -e APP_STARTUP=requestCounter-3.js -e APP_PORT=3001 -e REDIS_HOST=redis -e REDIS_PORT=6379 -e GITHUB_URL=https://github.com/lucasjellema/2019-fontys-business-and-IT-agility-through-microservice-architecture -d lucasjellema/node-run-live-reload:0.4.3
+```
+
+Check with `docker ps` if both containers are running correctly.
+
+You can now invoke version 3 of Request Counter:
+```
+curl docker:3010
+```
+
+And a few more times.
+
+You should see that the request is handled by version 3 of the application. That in itself is not very special. However, the special element we have added in version 3:
+
+* note the current value returned by request counter
+* stop the container: `docker stop request-counter-v3`
+* try to invoke version 3 of the application `curl docker:3010` - that should fail
+* start the container again: `docker start request-counter-v3`
+* invoke version 3 of the application `curl docker:3010`; not only should you get a response, you should get the next value of the request counter - picking up from where it left of when you stopped the container. This is the effect of the Redis cache instead of the memory state of the application.
+
+### Run a second instance of Version 3 
+Other instances of version 3 of the application can share the Redis cache. 
+
+Let's see this in action. Run a second instance of Version 3 of the Request Counter application.
+
+```
+docker run --name request-counter-v3-2 -p 3012:3001 -p 4506:4500 --network redis-net -e APPLICATION_ROOT_DIRECTORY=1-node  -e APP_STARTUP=requestCounter-3.js -e APP_PORT=3001 -e REDIS_HOST=redis -e REDIS_PORT=6379 -e GITHUB_URL=https://github.com/lucasjellema/2019-fontys-business-and-IT-agility-through-microservice-architecture -d lucasjellema/node-run-live-reload:0.4.3
+```
+Check with `docker ps` how many containers are running now. 
+
+You can now invoke this second incarnation of version 3 of Request Counter:
+```
+curl docker:3012
+```
+Even though this container has only just been started and never been invoked before, it returns a number greater than 1. Again, the cache in action.
