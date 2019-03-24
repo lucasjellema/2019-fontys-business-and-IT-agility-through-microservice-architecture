@@ -1,0 +1,27 @@
+{
+  "name": "tweet-translator",
+  "version": "0.0.2",
+  "description": "Node.js application that accepts POST requests with a Tweet message as JSON payload in the BODY. The Tweet is enriched and returned. the application also listens to Kafka messages on topic workflowEvents",
+  "main": "TweetTranslator.js",
+  "scripts": {
+    "start": "node TweetTranslator.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "kafka",
+    "node",
+    "js",
+    "produce",
+    "consume"
+  ],
+  "author": "Lucas Jellema",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.16.3",
+    "google-translate-api": "^2.3.0",
+    "kafka-node": "^4.0.2",
+    "redis": "^2.7.1",
+    "request": "^2.85.0"
+  }
+}
