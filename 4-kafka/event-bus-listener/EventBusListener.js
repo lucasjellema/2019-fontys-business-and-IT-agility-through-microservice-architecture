@@ -8,7 +8,7 @@ const config = require('./config');
 // inspiration from https://thatcoder.space/getting-started-with-kafka-and-node-js-with-example/ 
 
 var PORT = process.env.APP_PORT || 8096;
-var APP_VERSION = "0.8.6"
+var APP_VERSION = "0.8.7"
 var APP_NAME = "EventBusListener"
 
 
@@ -18,7 +18,7 @@ console.log("Running " + APP_NAME + "version " + APP_VERSION);
 var app = express();
 var server = http.createServer(app);
 server.listen(PORT, function () {
-  console.log('Microservice' + APP_NAME + ' running, Express is listening... at ' + PORT + " for /ping, /about and /event-bus calls");
+  console.log(`Microservice' + ${APP_NAME}  running (version ${APP_VERSION}), Express is listening... at  ${PORT}  for /ping, /about and /event-bus calls`);
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -51,7 +51,7 @@ var events = [];
 function initializeKafkaConsumer(attempt) {
 
   try {
-    const Consumer = kafka.HighLevelConsumer;
+    const Consumer = kafka.Consumer;
     const client = new kafka.KafkaClient({kafkaHost: `${config.kafka_server_host}:${config.kafka_server_port}`});
     let consumer = new Consumer(
       client,
