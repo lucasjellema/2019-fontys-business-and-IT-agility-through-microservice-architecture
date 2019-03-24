@@ -1,21 +1,14 @@
-var kafka = require('kafka-node')
+const kafka = require('kafka-node')
 var http = require('http'),
   request = require('request'),
   express = require('express'),
   bodyParser = require('body-parser');
 
-var kafkaHost = process.env.KAFKA_HOST || "ubuntu";
-var zookeeperPort = process.env.ZOOKEEPER_PORT || 2181;
+const config = require('./config');
+// inspiration from https://thatcoder.space/getting-started-with-kafka-and-node-js-with-example/ 
 
-var Consumer = kafka.Consumer
-var Producer = kafka.Producer
-KeyedMessage = kafka.KeyedMessage;
-
-var kafkaTopic = process.env.KAFKA_TOPIC || "workflowEvents";
-var client;
-var consumer;
 var PORT = process.env.APP_PORT || 8096;
-var APP_VERSION = "0.8.3"
+var APP_VERSION = "0.8.4"
 var APP_NAME = "EventBusListener"
 
 
@@ -49,52 +42,60 @@ app.get('/ping', function (req, res) {
 });
 
 app.get('/event-bus', function (req, res) {
-  var document = { "topic": kafkaTopic , "events": events};
+  var document = { "topic": kafkaTopic, "events": events };
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(document));
 });
 
 var events = [];
+function initializeKafkaConsumer(attempt) {
 
-var consumerOptions = {
-  host: kafkaHost + ":"+zookeeperPort,
-  groupId: 'event-bus-listener',
-  sessionTimeout: 15000,
-  protocol: ['roundrobin'],
-  fromOffset: 'earliest' // equivalent of auto.offset.reset valid values are 'none', 'latest', 'earliest'
-};
-
-function onMessage(message) {
-  console.log('%s read msg Topic="%s" Partition=%s Offset=%d'
-  , this.client.clientId, message.topic, message.partition, message.offset);
-  handleEventBusMessage(message);
-
+try {
+  const Consumer = kafka.HighLevelConsumer;
+  const client = new kafka.Client(config.kafka_server_host + ':' + config.kafka_server_port);
+  let consumer = new Consumer(
+    client,
+    [{ topic: config.kafka_topic, partition: 0, offset: -1 }],
+    {
+      autoCommit: true,
+      fetchMaxWaitMs: 1000,
+      fetchMaxBytes: 1024 * 1024,
+      encoding: 'utf8',
+      fromOffset: false,
+      groupId: 'event-bus-listener',
+      'auto.offset.reset': 'latest'
+    }
+  );
+  consumer.on('message', async function (message) {
+    console.log('here');
+    console.log(
+      'kafka-> ',
+      message.value
+    );
+    try {
+      handleEventBusMessage(message);
+    } catch (e) {
+      console.log(`handling the message failed with error ${JSON.stringify(e)}`)
+    }
+  })
+  consumer.on('error', function (err) {
+    console.log('error', err);
+  });
+  consumer.on('connect', function () {
+    console.log(`connected to kafkaTopic ${config.kafka_topic} at host ${config.kafka_server_host}:${kafka_server_port}`);
+  })
 }
-
-function onError(error) {
-  console.error(error);
-  console.error(error.stack);
+catch (e) {
+  console.log(e);
 }
+}//initializeKafkaConsumer
 
 process.once('SIGINT', function () {
   async.each([consumerGroup], function (consumer, callback) {
-      consumer.close(true, callback);
+    consumer.close(true, callback);
   });
 });
 
-
-function initializeKafkaConsumer(attempt) {
-  var topics = [kafkaTopic];
-  var consumerGroup = new kafka.ConsumerGroup(Object.assign({ id: 'consumerLocal' }, consumerOptions), topics);
-  consumerGroup.on('error', onError);
-  consumerGroup.on('message', onMessage);
-  
-  consumerGroup.on('connect', function () {
-      console.log('connected to ' + kafkaTopic + " at " + consumerOptions.host);
-  })
-  
-
-}//initializeKafkaConsumer
 
 initializeKafkaConsumer(1);
 
