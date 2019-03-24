@@ -61,11 +61,11 @@ Back in terminal 1:
 curl localhost:3000
 ```
 
-Repeat this statement a few times. CLearly version 2 is running. Still not spectacular.
+Repeat this statement a few times. Clearly version 2 is running. Still not spectacular.
 
 ## Accessing the Request Counter application from a Browser Window
 
-Open a browser window by clicking on the Plus sign at the top of the terminal window and selecting *Select port to view on Client 1*. In the browse window that is displayed, set the port to 3000 and click on button *Display Port*.
+Open a browser window by clicking on the Plus sign at the top of the terminal window and selecting *Select port to view on Client 1*. In the browser window that is displayed, set the port to 3000 and click on button *Display Port*.
  
 Now the browser window displays the response from the Node application:
  

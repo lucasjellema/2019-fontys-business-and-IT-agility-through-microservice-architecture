@@ -32,7 +32,7 @@ docker ps
 ```
 to get a list of all container(s) currently running.
 
-The first section of thsame same container identifier is shown, along with other details about the running container. This shows that the container is listening at port 3006 on the Docker host for requests that are channeled to port 3001 internally inside the Docker. Presumably, the container runs an application - the request counter application we saw before - that handles requests at port 3001.
+The first section of the same container identifier is shown, along with other details about the running container. This shows that the container is listening at port 3006 on the Docker host for requests that are channeled to port 3001 internally inside the Docker. Presumably, the container runs an application - the request counter application we saw before - that handles requests at port 3001.
 
 Try out the application:
 
@@ -54,14 +54,14 @@ docker exec -it request-counter  bash
 This opens a Shell inside the container. Look around for example with `ps -ef` to see a list of all processes running *inside the container* . Here you can check the Node application that the container cloned from GitHub when it was starting: `ls /tmp/app/1-node`. Type `exit` to return to the Docker host.
 
 
-### Container Inage docker-node-run-live-reload
+### Container Image docker-node-run-live-reload
 A generic Docker Container Image that can run a Node application from a GitHub URL - and refresh the application upon changes in the GitHub sources (without reloading or even restarting the container)
 
 For more details on the container image used in this section, check out this GitHub Repo: https://github.com/lucasjellema/docker-node-run-live-reload
 
 ## Accessing the Request Counter application from a Browser Window
 
-Open a browser window by clicking on the Plus sign at the top of the terminal window and selecting *Select port to view on Host  1*. In the browse window that is displayed, set the port to 3006 and click on button *Display Port*.
+Open a browser window by clicking on the Plus sign at the top of the terminal window and selecting *Select port to view on Host  1*. In the browser window that is displayed, set the port to 3006 and click on button *Display Port*.
  
 Now the browser window displays the response from the Node application. In this case, the browser's HTTP request is sent to the Node application running inside the Docker container on the Docker host.
 

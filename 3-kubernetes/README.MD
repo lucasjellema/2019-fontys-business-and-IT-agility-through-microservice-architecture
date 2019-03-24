@@ -11,18 +11,11 @@ Walk your way through this scenario:
 * run a deployment on Kubernetes (based on a public Docker Container image)
 * run and inspect the Kubernetes Dashboard - a GUI that offers great overview of what is happening on the K8S cluster *Note: stop at step 4; do not press continue.*
 
-Check the logs from the Pod first-deployment-<unique id>. Not because they are extremely interesting, but to get a feel for that you can do it. From the Pod details page in the dashboard, you can also open an Exec window, right into the container. Just as we did with `docker exec -it bash` in the Docker environment, we can execute commands in the running container.
+Check the logs from the Pod first-deployment-<unique id>. Not because they are extremely interesting, but to get a feel for that you can do it. 
 
 We can do similar things from the command line, using kubectl:
 `kubectl logs <POD-identifier> -f`
 we can read the live logging from the Pod.
-
-Using
-```
-kubectl exec -it <POD identifier> -- /bin/bash
-```
-we can open a shell window into the container (most containers, as unfortunately the first-deployment container does not seem to allow it)
-
 
 ## Retrieve application resources
 In the terminal window, git clone the workshop GitHub repo with 
@@ -74,6 +67,14 @@ Note: the initial Pod creation can take up to 90 seconds - because the container
 
 In both cases, you will see the response from the Node application running in the container inside the Pod exposed by the Service on the Kubernetes cluster.
 
+From the Pod details page in the dashboard, you can also open an Exec window, right into the container. Just as we did with `docker exec -it bash` in the Docker environment, we can execute commands in the running container.
+
+Using
+```
+kubectl exec -it <POD identifier> -- /bin/bash
+```
+we can open a shell window into the container (most containers, as unfortunately the first-deployment container does not seem to allow it)
+
 
 ## Using Kubernetes Deployment to control Scaling and Recovery
 We will move to a next level. For that we need to remove the stand alone pod. Execute:
@@ -102,7 +103,7 @@ or check with this command to display information about the Deployment:
 ```
 kubectl describe deployment request-counter-ms-deployment
 ```
-In the end, it is still the Pod that handles the work. Check the logs for the Pod and when it is ready to handle requests, wr can go invoke the service again. First, expose the deployment - akin to creating a service resource for the deployment.
+In the end, it is still the Pod that handles the work. Check the logs for the Pod and when it is ready to handle requests, we can go invoke the service again. First, expose the deployment - akin to creating a service resource for the deployment.
 
 Execute:
 ```
