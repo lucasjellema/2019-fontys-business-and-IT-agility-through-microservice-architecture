@@ -50,44 +50,44 @@ app.get('/event-bus', function (req, res) {
 var events = [];
 function initializeKafkaConsumer(attempt) {
 
-try {
-  const Consumer = kafka.HighLevelConsumer;
-  const client = new kafka.Client(config.kafka_server_host + ':' + config.kafka_server_port);
-  let consumer = new Consumer(
-    client,
-    [{ topic: config.kafka_topic, partition: 0, offset: -1 }],
-    {
-      autoCommit: true,
-      fetchMaxWaitMs: 1000,
-      fetchMaxBytes: 1024 * 1024,
-      encoding: 'utf8',
-      fromOffset: false,
-      groupId: 'event-bus-listener',
-      'auto.offset.reset': 'latest'
-    }
-  );
-  consumer.on('message', async function (message) {
-    console.log('here');
-    console.log(
-      'kafka-> ',
-      message.value
+  try {
+    const Consumer = kafka.HighLevelConsumer;
+    const client = new kafka.KafkaClient({kafkaHost: `${config.kafka_server_host}:${config.kafka_server_port}`);
+    let consumer = new Consumer(
+      client,
+      [{ topic: config.kafka_topic, partition: 0, offset: -1 }],
+      {
+        autoCommit: true,
+        fetchMaxWaitMs: 1000,
+        fetchMaxBytes: 1024 * 1024,
+        encoding: 'utf8',
+        fromOffset: false,
+        groupId: 'event-bus-listener',
+        'auto.offset.reset': 'latest'
+      }
     );
-    try {
-      handleEventBusMessage(message);
-    } catch (e) {
-      console.log(`handling the message failed with error ${JSON.stringify(e)}`)
-    }
-  })
-  consumer.on('error', function (err) {
-    console.log('error', err);
-  });
-  consumer.on('connect', function () {
-    console.log(`connected to kafkaTopic ${config.kafka_topic} at host ${config.kafka_server_host}:${kafka_server_port}`);
-  })
-}
-catch (e) {
-  console.log(e);
-}
+    consumer.on('message', async function (message) {
+      console.log('here');
+      console.log(
+        'kafka-> ',
+        message.value
+      );
+      try {
+        handleEventBusMessage(message);
+      } catch (e) {
+        console.log(`handling the message failed with error ${JSON.stringify(e)}`)
+      }
+    })
+    consumer.on('error', function (err) {
+      console.log('error', err);
+    });
+    consumer.on('connect', function () {
+      console.log(`connected to kafkaTopic ${config.kafka_topic} at host ${config.kafka_server_host}:${kafka_server_port}`);
+    })
+  }
+  catch (e) {
+    console.log(e);
+  }
 }//initializeKafkaConsumer
 
 process.once('SIGINT', function () {
