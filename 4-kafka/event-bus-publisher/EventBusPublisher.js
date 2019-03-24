@@ -6,7 +6,7 @@ var http = require('http'),
   const config = require('./config');
 
 var PORT = process.env.APP_PORT || 8091;
-var APP_VERSION = "0.9.4"
+var APP_VERSION = "0.9.5"
 var APP_NAME = "EventBusPublisher"
 
 
@@ -49,7 +49,7 @@ app.get('/publish', function (req, res) {
   } //for
   publishEvent(event);
   res.setHeader('Content-Type', 'application/json');
-  var document = { "Result": "Published Event to Topic " + kafkaTopic };
+  var document = { "Result": "Published Event to Topic " + config.kafka_topic };
   res.send(JSON.stringify(document));
 });
 
