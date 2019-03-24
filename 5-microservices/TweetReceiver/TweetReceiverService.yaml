@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: tweetreceiverservice
+    namespace: choreography
+    labels:
+       app: tweetreceiverservice
+spec:
+  ports:
+    # The port that this service should serve on.
+    - port: 8101
+      # port listened at inside the container
+      targetPort: 8101
+  # Label keys and values that must match in order to receive traffic for this service.
+  selector:
+    app: tweetreceiver-ms
+  type: NodePort

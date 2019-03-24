@@ -1,0 +1,24 @@
+{
+  "name": "log-monitor",
+  "version": "0.0.2",
+  "description": "Node.js application that consumes events from Kafka Topic logTopic and publishes the 100 most recent log entries to GET requests",
+  "main": "LogMonitor.js",
+  "scripts": {
+     "start": "node LogMonitor.js"
+ ,    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "kafka",
+    "node",
+    "js",
+    "consume"
+  ],
+  "author": "Lucas Jellema",
+  "license": "ISC",
+  "dependencies": {
+    "kafka-node": "^4.0.2",
+    "body-parser": "^1.16.1",
+    "express": "^4.13.4",
+    "request": "^2.81.0"
+  }
+}
