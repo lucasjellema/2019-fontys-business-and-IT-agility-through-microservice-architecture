@@ -6,7 +6,7 @@ var http = require('http'),
   const config = require('./config');
 
 var PORT = process.env.APP_PORT || 8091;
-var APP_VERSION = "0.8.4"
+var APP_VERSION = "0.9.1"
 var APP_NAME = "EventBusPublisher"
 
 
@@ -16,7 +16,7 @@ console.log("Running " + APP_NAME + "version " + APP_VERSION);
 var app = express();
 var server = http.createServer(app);
 server.listen(PORT, function () {
-  console.log('Microservice' + APP_NAME + ' running, Express is listening... at ' + PORT + " for /ping, /about and /publish calls");
+  console.log(`Microservice' + ${APP_NAME}  running (version ${APP_VERSION}), Express is listening... at  ${PORT}  for /ping, /about and /publish calls`);
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -55,7 +55,7 @@ app.get('/publish', function (req, res) {
 
 
 const Producer = kafka.Producer;
-const client = new kafka.Client(config.kafka_server_host + ':' + config.kafka_server_port);
+const client = new kafka.KafkaClient({kafkaHost: `${config.kafka_server_host}:${config.kafka_server_port}`});
 const producer = new Producer(client);
 const kafka_topic = config.kafka_topic;
 
