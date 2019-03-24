@@ -8,7 +8,7 @@ const config = require('./config');
 // inspiration from https://thatcoder.space/getting-started-with-kafka-and-node-js-with-example/ 
 
 var PORT = process.env.APP_PORT || 8096;
-var APP_VERSION = "0.8.8"
+var APP_VERSION = "0.8.9"
 var APP_NAME = "EventBusListener"
 
 
@@ -42,7 +42,7 @@ app.get('/ping', function (req, res) {
 });
 
 app.get('/event-bus', function (req, res) {
-  var document = { "topic": kafkaTopic, "events": events };
+  var document = { "topic": config.kafka_topic, "events": events };
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(document));
 });
