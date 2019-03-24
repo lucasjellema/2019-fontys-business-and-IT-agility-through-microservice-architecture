@@ -1,0 +1,24 @@
+{
+  "name": "cache-inspector",
+  "version": "0.0.4",
+  "description": "Node.js application that retrieves entries from the Redis cache",
+  "main": "CacheInspector.js",
+  "scripts": {
+    "start": "node CacheInspector.js.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "redis",
+    "node",
+    "js",
+    "cache""
+  ],
+  "author": "Lucas Jellema",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.13.4",
+    "redis": "^2.8.0",
+    "request": "^2.81.0"
+  }
+}
