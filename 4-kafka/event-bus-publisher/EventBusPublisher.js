@@ -1,21 +1,12 @@
-var kafka = require('kafka-node')
 var http = require('http'),
   request = require('request'),
   express = require('express'),
   bodyParser = require('body-parser');
+  const kafka = require('kafka-node');
+  const config = require('./config');
 
-var kafkaHost = process.env.KAFKA_HOST || "ubuntu";
-var zookeeperPort = process.env.ZOOKEEPER_PORT || 2181;
-//var kafkaHostIP = "192.168.188.101";
-var Consumer = kafka.Consumer
-var Producer = kafka.Producer
-KeyedMessage = kafka.KeyedMessage;
-
-var kafkaTopic = process.env.KAFKA_TOPIC || "event-bus";
-var client;
-var consumer;
 var PORT = process.env.APP_PORT || 8091;
-var APP_VERSION = "0.8.3"
+var APP_VERSION = "0.8.4"
 var APP_NAME = "EventBusPublisher"
 
 
@@ -62,27 +53,44 @@ app.get('/publish', function (req, res) {
   res.send(JSON.stringify(document));
 });
 
-var events = [];
+
+const Producer = kafka.Producer;
+const client = new kafka.Client(config.kafka_server_host + ':' + config.kafka_server_port);
+const producer = new Producer(client);
+const kafka_topic = config.kafka_topic;
 
 function initializeKafkaProducer(attempt) {
+
   try {
-    console.log("Try to initialize Kafka Client and Producer, attempt " + attempt);
-    var client = new kafka.Client(kafkaHost + ":" + zookeeperPort + "/")
-    console.log("created client");
-    producer = new Producer(client);
-    console.log("submitted async producer creation request");
-    producer.on('ready', function () {
-      console.log("Producer is ready in " + APP_NAME);
+    console.log(kafka_topic);
+    // payloads: Array,array of ProduceRequest, ProduceRequest is a JSON object 
+    // with fields topic, messages (array of individual messages), key (only needed with KeyPartitioner), partition (defaults to 0) , attributes (default to 0), timestamp (also set as default Date.now())
+    let payloads = [
+      {
+        topic: kafka_topic,
+        messages: [ new KeyedMessage('EventBusEvent', JSON.stringify({"news":"The Lastest News of the World"}))
+                  , new KeyedMessage('EventBusEvent', JSON.stringify({"more news":"The Lastest News of the Cluster","comments":"No Comment"})) ]
+      }
+    ];
+  
+    producer.on('ready', async function() {
+      let push_status = producer.send(payloads, (err, data) => {
+        if (err) {
+          console.log('[kafka-producer -> '+kafka_topic+']: broker update failed');
+        } else {
+          console.log('[kafka-producer -> '+kafka_topic+']: broker update success');
+        }
+      });
     });
-    producer.on('error', function (err) {
-      console.log("failed to create the client or the producer " + JSON.stringify(err));
-    })
+  
+    producer.on('error', function(err) {
+      console.log(err);
+      console.log('[kafka-producer -> '+kafka_topic+']: connection errored');
+      throw err;
+    });
   }
-  catch (e) {
-    console.log("Exception in initializeKafkaProducer" + e);
-    console.log("Exception in initializeKafkaProducer" + JSON.stringify(e));
-    console.log("Try again in 5 seconds");
-    setTimeout(initializeKafkaProducer, 5000, ++attempt);
+  catch(e) {
+    console.log(e);
   }
 }//initializeKafkaProducer
 initializeKafkaProducer(1);
@@ -90,10 +98,13 @@ initializeKafkaProducer(1);
 function publishEvent(event) {
   km = new KeyedMessage('EventBusEvent', JSON.stringify(event));
   payloads = [
-    { topic: kafkaTopic, messages: [km], partition: 0 }
+    { topic: kafka_topic, messages: [km], partition: 0 }
   ];
   producer.send(payloads, function (err, data) {
-    console.log("Published event to topic " + kafkaTopic + " :" + JSON.stringify(data));
+    if (err)
+      console.log(`Error in publishing event to topic ${kafka_topic} : ${JSON.stringify(err)}`);
+    else
+      console.log("Published event to topic " + kafka_topic + " :" + JSON.stringify(data));
   });
 
 }
