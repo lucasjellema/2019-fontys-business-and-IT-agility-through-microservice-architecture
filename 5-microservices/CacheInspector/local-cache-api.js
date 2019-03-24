@@ -1,7 +1,3 @@
-var request = require('request')
-    ;
-
-
 //this module talks to a locally running Redis Cache
 
 var localCacheAPI = module.exports;

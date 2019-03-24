@@ -1,5 +1,4 @@
 var http = require('http'),
-  request = require('request'),
   express = require('express'),
   bodyParser = require('body-parser');
 var localCacheAPI = require("./local-cache-api.js");
@@ -57,4 +56,4 @@ app.get('/cacheEntry', function (req, res) {
   }
 });
 
-localCacheAPI.putInCache("TheAnswer", {answer: 42})
+localCacheAPI.putInCache("TheAnswer", {answer: 42} , function (payload) {console.log(`Result from putting TheAnswer in the case: ${payload}` )})

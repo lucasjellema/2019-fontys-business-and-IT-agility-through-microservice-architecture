@@ -11,14 +11,13 @@
     "redis",
     "node",
     "js",
-    "cache""
+    "cache"
   ],
   "author": "Lucas Jellema",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.16.1",
     "express": "^4.13.4",
-    "redis": "^2.8.0",
-    "request": "^2.81.0"
+    "redis": "^2.8.0"
   }
 }
