@@ -13,13 +13,15 @@ spec:
     imagePullPolicy: IfNotPresent
     env:
     - name: GIT_URL
-      value: "https://github.com/lucasjellema/workshop-event-bus-microservice-choreography-may-2018"
+      value: "https://github.com/lucasjellema/2019-fontys-business-and-IT-agility-through-microservice-architecture"
     - name: APP_PORT
       value: "8096"
     - name: APP_HOME
-      value: "part3/event-bus-listener"
+      value: "4-kafka/event-bus-listener"
     - name: APP_STARTUP
       value: "EventBusListener.js"
+    # assuming Kafka was started on minikube using https://github.com/d1egoaz/minikube-kafka-cluster
+    # the Zookeeper cluster is exposed through the service known as zookeeper-service.kafka-ca1 within the Minikube cluster
     - name: KAFKA_HOST
       value: "zookeeper-service.kafka-ca1"
     - name: ZOOKEEPER_PORT
