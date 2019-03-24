@@ -7,7 +7,7 @@ const config = require('./config');
 
 var logTopic = config.kafka_topic ;
 var PORT = process.env.APP_PORT || 8115;
-var APP_VERSION = "0.1.28"
+var APP_VERSION = "0.1.29"
 var APP_NAME = "LogMonitor"
 
 console.log("Running " + APP_NAME + " version " + APP_VERSION);
