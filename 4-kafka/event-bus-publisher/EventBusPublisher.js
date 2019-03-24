@@ -97,3 +97,6 @@ function publishEvent(event) {
   });
 
 }
+
+// publish a test event - after 8 seconds to give the application some time to prepare the Kafka Client
+setTimeout( function () {publishEvent({"MyEvent":{"myPayload":"some data","myMOre":"MOre data"}})},8000)
