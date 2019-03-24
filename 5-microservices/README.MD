@@ -36,7 +36,8 @@ A simple cache inspector is available in directory 5-microservices\CacheInspecto
 
 ```
 cd CacheInspector
-kubectl create –f CacheInspectorPod.yaml –f CacheInspectorService.yaml
+kubectl apply -f CacheInspectorPod.yaml
+kubectl apply -f CacheInspectorService.yaml
 kubectl get svc --namespace=choreography
 ```
 
@@ -53,7 +54,7 @@ curl -X GET \
 Being able to keep track of what is going on inside the microservices – on a technical, non functional level and on a functional level – is pretty important in order to detect malfunctions and analyze and ultimately resolve any issues. The microservices you will deploy today all produce logging – to a Kafka logTopic. The LogMonitor consumes the log events on this topic and exposes them through a simple web UI. Let’s install the LogMonitor now.
 
 ```
-cd ../LogMonitor
+cd ../LogMonitor/
 kubectl create -f LogMonitorPod.yaml  -f LogMonitorService.yaml
 ```
 With this command, a new Pod is launched that consumes the log events on the logTopic and keeps them in memory to make them available to anyone requesting them through a simple HTTP request: http://clusterIP:logMonitorPort/logs
@@ -70,7 +71,7 @@ The microservice TweetReceiver exposes an API that expects HTTP Post Requests wi
 Run:
 
 ```
-cd ../TweetReceiver
+cd ../TweetReceiver/
 kubectl create -f TweetReceiverPod.yaml  -f TweetReceiverService.yaml
 ```
 
@@ -94,6 +95,16 @@ curl -X POST \
 , "firstLinkFromTweet" : "https://t.co/cBZNgqKk0U"
 }'
 ```
+
+Note: you can edit the curl request in a file and then pipe it to the shell. For example:
+
+* `vi curlpost`
+* press esc; then type `set paste` followed by enter
+* copy and paste the contents 
+* edit the contents - at least the URL
+* press esc; them type `wq`
+* type `cat curlpost | sh` to execute the post request with curl 
+
 You can now check the logs - a few will be writte in response to the Tweet. 
 
 ## Run Microservice Workflow Launcher
@@ -101,7 +112,7 @@ The Workflow Launcher listens to the workflowEvents Kafka Topic for events of ty
 
 Run the Workflow Launcher with:
 ```
-cd ../WorklowLauncher
+cd ../WorklowLauncher/
 kubectl create -f WorkflowLauncherPod.yaml
 ```
 Note: the values for the environment variable KAFKA_HOST, ZOOKEEPER_PORT and REDIS_HOST and REDIS_PORT in the yaml file link this microservice to some of its dependencies.
@@ -119,9 +130,11 @@ The next microservice takes care of validating tweets. It can do so based on wor
 
 Create and run the microservice :
 ```
-cd
+cd ../ValidateTweet/
 kubectl create -f ValidateTweetPod.yaml
+```
 Also to expose an API for this microservice:
+```
 kubectl create -f ValidateTweetService.yaml
 ```
 
@@ -166,7 +179,7 @@ The last microservice we discuss does two things:
 2.	it responds to HTTP Requests for the current tweet board [contents] by returning a JSON document with the most recent (maximum 25) Tweets that were processed by the workflow
 
 This microservice is stateless. It uses the cache in the microservices platform to manage a document with the most recent tweets.
-Run a Pod on Kubernetes with this microservice using this command:
+Run a Pod on Kubernetes with this microservice using this co    mmand:
 ```
 cd ../TweetBoard
 kubectl create -f TweetBoardPod.yaml
@@ -178,14 +191,14 @@ kubectl create -f TweetBoardService.yaml
 This microservice looks for workflowEvents and searches actions of type TweetBoardCapture that are available for execution. If it finds such actions, it will execute them.
 
 All actions in the routing slips of workflow instances can now be executed by the available microservices.
-Inspect the port assigned to this microservice using `kubectl get services --namespace choreograhy`. Then access the microservice at http://<Katacoda environment - assigned port>/tweetBoard. You will not yet see any tweets on the tweet board.
+Inspect the port assigned to this microservice using `kubectl get services --namespace choreography`. Then access the microservice at http://<Katacoda environment - assigned port>/tweetBoard. You will not yet see any tweets on the tweet board.
 
 However, as soon as you publish a valid tweet to the TweetReceiver micro service, the workflow is initiated and through the choreographed dance that involves Workflow Launcher, TweetValidator, TweetEnricher and TweetBoard, that tweet will make its appearance on the tweet board.
 Publish a few tweets to TweetReceiver and inspect the tweet board again. 
 
 ```
 curl -X POST \
-  http://<Katacoda URL for tweetvalidatorservice>/tweet \
+  http://<Katacoda URL for tweetreceiverservice>/tweet \
   -H 'Content-Type: application/json' \
   -d '{ "text":"I want to share this news with you ... " 
              , "author" : "you"
@@ -215,39 +228,3 @@ to try this later version of the workflow.
 
 Publish a new tweet to TweetReceiver. Now when you inspect the workflow document in the cache (through the CacheInspector) you will find that in the latest workflow, enrichment is done before validation.
 
-## Add Tweet Translation to the Workflow
-A more substantial change is the next one, where we introduce a translation of the tweets, into several popular languages. 
- 
-We first create a microservice called TweetTranslator that can perform the translation of tweets and that can consume workflow events from the Kafka topic. Next, we will update the workflow definition to also include the translation of the tweet: 
-
-```
-cd ../TweetTranslator
-kubectl apply -f TweetTranslatorPod.yaml –f TweetTranslatorService.yaml
-```
-This creates a Pod for the TweetTranslator microservice as well as a Service that exposes the translation capabilities. The microservices listens to the workflowEvents topic – for any workflowEvents for a workflow instance that it can make a contribution to. And it can handle direct HTTP requests.
-
-Use `kubectl get services --namespace choreography` to find out the port at which the TweetTranslator microservice is exposed.
-
-Now can you  see the translation of the Tweet in action with this curl call:
-```
-curl -X POST \
-  http://<Katacoda environment - Service Port>/tweet \
-  -H 'Content-Type: application/json' \
-  -d '{ "text":"The message I want to share should be translated in as many languages as possible - it is Great, the greatest or is it fake,the fakest" 
-, "author" : "you again"
-, "authorImageUrl" : "http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png"
-, "createdTime" : "April 1st, 2019 at 11:15PM"
-, "tweetURL" : "http://twitter.com/SaibotAirport/status/853935915714138112"
-, "firstLinkFromTweet" : "https://t.co/cBZNgqKk0U"
-}'
-``` 
-
-A somewhat updated version of the Tweet Workflow is available in 5-microservices\WorkflowLauncher\ WorkflowLauncherV3.js. In this version, Translation is added to the workflow after validation. This is defined in the message variable at the bottom of the program. Take a look at definition of var message in the source of WorkflowLauncherV3.js – and try to understand the updated definition of the routing slip:
- 
-You can force replace the pod currently running on Kubernetes for workflow-launcher-ms 
-```
-cd ../WorkflowLauncher
-kubectl replace -f WorkflowLauncherV3Pod.yaml --force
-```
-
-Publish a new tweet to TweetReceiver. Now when you inspect the workflow document in the cache (through the CacheInspector using the workflowConversationIdentifier that you have learned through the LogMonitor) you will find that in the latest workflow, translation has been done. When you retrieve tweets from the TweetBoard, you will also find the translations in the final outcome of the workflow.
