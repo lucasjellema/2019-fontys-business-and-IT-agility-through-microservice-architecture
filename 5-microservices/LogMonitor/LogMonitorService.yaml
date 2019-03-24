@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: logmonitorservice
+    namespace: choreography
+    labels:
+       app: logmonitorservice
+spec:
+  ports:
+    # The port that this service should serve on.
+    - port: 8115
+      # port listened at inside the container
+      targetPort: 8115
+  # Label keys and values that must match in order to receive traffic for this service.
+  selector:
+    app: log-monitor-ms
+  type: NodePort
