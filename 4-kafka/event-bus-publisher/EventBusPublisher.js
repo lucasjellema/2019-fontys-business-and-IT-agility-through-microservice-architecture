@@ -6,7 +6,7 @@ var http = require('http'),
   const config = require('./config');
 
 var PORT = process.env.APP_PORT || 8091;
-var APP_VERSION = "0.9.2"
+var APP_VERSION = "0.9.3"
 var APP_NAME = "EventBusPublisher"
 
 
@@ -53,7 +53,7 @@ app.get('/publish', function (req, res) {
   res.send(JSON.stringify(document));
 });
 
-
+console.log(`Attempting to create client for ${config.kafka_server_host}:${config.kafka_server_port}`)
 const Producer = kafka.Producer;
 const client = new kafka.KafkaClient({kafkaHost: `${config.kafka_server_host}:${config.kafka_server_port}`});
 const producer = new Producer(client);
