@@ -8,7 +8,7 @@ const config = require('./config');
 // inspiration from https://thatcoder.space/getting-started-with-kafka-and-node-js-with-example/ 
 
 var PORT = process.env.APP_PORT || 8096;
-var APP_VERSION = "0.8.4"
+var APP_VERSION = "0.8.5"
 var APP_NAME = "EventBusListener"
 
 
