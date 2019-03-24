@@ -23,9 +23,9 @@ spec:
     # assuming Kafka was started on minikube using https://github.com/d1egoaz/minikube-kafka-cluster
     # the Zookeeper cluster is exposed through the service known as zookeeper-service.kafka-ca1 within the Minikube cluster
     - name: KAFKA_HOST
-      value: "zookeeper-service.kafka-ca1"
+      value: "kafka.kafka-ca1"
     - name: ZOOKEEPER_PORT
-      value: "2181"
+      value: "9092"
     - name: KAFKA_TOPIC
       value: "event-bus"
     ports:
