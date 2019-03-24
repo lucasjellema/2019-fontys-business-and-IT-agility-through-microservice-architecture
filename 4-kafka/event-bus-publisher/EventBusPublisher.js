@@ -6,7 +6,7 @@ var http = require('http'),
   const config = require('./config');
 
 var PORT = process.env.APP_PORT || 8091;
-var APP_VERSION = "0.9.1"
+var APP_VERSION = "0.9.2"
 var APP_NAME = "EventBusPublisher"
 
 
@@ -58,6 +58,7 @@ const Producer = kafka.Producer;
 const client = new kafka.KafkaClient({kafkaHost: `${config.kafka_server_host}:${config.kafka_server_port}`});
 const producer = new Producer(client);
 const kafka_topic = config.kafka_topic;
+const KeyedMessage = kafka.KeyedMessage
 
 function initializeKafkaProducer(attempt) {
 
