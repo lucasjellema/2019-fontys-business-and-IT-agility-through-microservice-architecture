@@ -8,7 +8,7 @@ const config = require('./config');
 // inspiration from https://thatcoder.space/getting-started-with-kafka-and-node-js-with-example/ 
 
 var PORT = process.env.APP_PORT || 8096;
-var APP_VERSION = "0.8.7"
+var APP_VERSION = "0.8.8"
 var APP_NAME = "EventBusListener"
 
 
@@ -52,6 +52,7 @@ function initializeKafkaConsumer(attempt) {
 
   try {
     const Consumer = kafka.Consumer;
+    console.log(`... trying to connect to Kafka at ${config.kafka_server_host}:${config.kafka_server_port}`)
     const client = new kafka.KafkaClient({kafkaHost: `${config.kafka_server_host}:${config.kafka_server_port}`});
     let consumer = new Consumer(
       client,
