@@ -1,0 +1,273 @@
+{
+	"info": {
+		"_postman_id": "62b6736d-e974-47ef-9206-8b7a481f5765",
+		"name": "MicroServiceTestSet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Publish Fake Tweet",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\":\"#79 Today is a microservice workshop at Fontys Hogeschool in Eindhoven\" \r\n, \"author\" : \"lucasjellema\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"April 1st, 2019 at 08:39AM\"\r\n, \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
+				},
+				"url": {
+					"raw": "{{clusterIP}}:{{receiveTweetPort}}/tweet",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{receiveTweetPort}}",
+					"path": [
+						"tweet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Publish Valid Tweet 2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\":\"Demonstration of Apache Kafka\" \r\n, \"author\" : \"lucasjellema\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"August 16th, 2018 at 7:18PM\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
+				},
+				"url": {
+					"raw": "{{clusterIP}}:{{receiveTweetPort}}/tweet",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{receiveTweetPort}}",
+					"path": [
+						"tweet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Publish Valid Tweet 3",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\":\"Interesting workshop on Microservices, Kubernetes and Apache Kafka\" \r\n, \"author\" : \"memyselfandI\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"June 1, 2017 at 7:18PM\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
+				},
+				"url": {
+					"raw": "{{clusterIP}}:{{receiveTweetPort}}/tweet",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{receiveTweetPort}}",
+					"path": [
+						"tweet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Publish Invalid Tweet 4",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\":\"Champions League Final on Saturday. Juve has to work very hard to dominate Real Madrid\" \r\n, \"author\" : \"johndoe\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"June 1, 2017 at 7:20PM\"\r\n, \"firstLinkFromTweet\" : \"https://en.wikipedia.org/wiki/Juventus_F.C.\"\r\n}"
+				},
+				"url": {
+					"raw": "{{clusterIP}}:{{receiveTweetPort}}/tweet",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{receiveTweetPort}}",
+					"path": [
+						"tweet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log Monitor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{clusterIP}}:{{logmonitorPort}}/logs",
+					"protocol": "http",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{logmonitorPort}}",
+					"path": [
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ValidateTweet",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\":\"RT: Trump brexit Local Tweet  #oraclecode Tweet @StringSection @redCopper\" \r\n             , \"author\" : \"lucasjellema\"\r\n             , \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n             , \"createdTime\" : \"April 17, 2017 at 01:39PM\"\r\n             , \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n             , \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n             }"
+				},
+				"url": {
+					"raw": "{{clusterIP}}:{{validateTweetPort}}/tweet",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{validateTweetPort}}",
+					"path": [
+						"tweet"
+					]
+				},
+				"description": "Calls to microservices"
+			},
+			"response": []
+		},
+		{
+			"name": "Enrich Tweet",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\":\"Nr 19 - Enricher Test Great, the greatest, fake,the fakest\" \r\n, \"author\" : \"lucasjellema\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"April 17, 2017 at 01:39PM\"\r\n, \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
+				},
+				"url": {
+					"raw": "{{clusterIP}}:{{enrichTweetPort}}/tweet",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{enrichTweetPort}}",
+					"path": [
+						"tweet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get TweetBoard",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{clusterIP}}:{{tweetboardPort}}/tweetBoard",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{tweetboardPort}}",
+					"path": [
+						"tweetBoard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve CacheEntry from Kubernetes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{clusterIP}}:{{cachePort}}/cacheEntry?key=TheAnswer",
+					"protocol": "http",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{cachePort}}",
+					"path": [
+						"cacheEntry"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "TheAnswer"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Translate Tweet",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\":\"Nr 26 Great, the greatest, fake,the fakest\" \r\n, \"author\" : \"lucasjellema\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"April 17, 2017 at 01:39PM\"\r\n, \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
+				},
+				"url": {
+					"raw": "{{clusterIP}}:{{translateTweetPort}}/tweet",
+					"host": [
+						"{{clusterIP}}"
+					],
+					"port": "{{translateTweetPort}}",
+					"path": [
+						"tweet"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
