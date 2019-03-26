@@ -213,6 +213,33 @@ kubectl delete pod <name of redis-cache-… pod>
 A new pod will be started after a few seconds and the old one terminated. When we then access the microservice requestcounter, the inevitable has happened: a counter reset. The old value was lost when the Redis cache pod was terminated:
 
 
+# Visualizing Kubernetes Resources
+WeaveScope is a tool that provides you with insight into the contents of the Kubernetes cluster. It shows listings and graphical visualizations of different types of resources and their interdependencies. Details can be learned, incuding memory usage and CPU usage - per container and for the entire cluster. 
+
+Open a new Terminal window and execute these commands:
+```
+git clone https://github.com/weaveworks/scope
+
+kubectl apply -f scope/examples/k8s
+```
+
+This will create a namespace called weave with several deployments and pods. Note: if you get the error: “Error from server (NotFound): error when creating "examples/k8s/ds.yaml": namespaces "weave" not found”, then simply run the command again. The namespace is created later than the deployment and deamonset, the second time round it already exists.
+
+The next command will instruct kubectl to change the type of the service `weave-scope-app` to NodePort which will make it accessible on a port that we can easily inspect:
+
+```
+kubectl patch svc weave-scope-app -p '{"spec": {"type": "NodePort"}}' -n weave
+```
+
+Retrieve a list of all services and their ports with this command:
+```
+kubectl get svc -n weave
+```
+
+ This should give you the port at which you can access WeaveScope.
+
+Click on the plus icon to open a new window on Host 1. Enter the node port for the weave-scope-app service. You should now see the WeaveScope user interface. Click for example on *processes* .  
+
 
 # Resources
 
@@ -251,3 +278,5 @@ kubectl exec –it <name of pod> -c <name of container> -- bash
 ```
 
 See the API reference for Kubectl exec for more details: https://kubernetes.io/docs/user-guide/kubectl/v1.6/#exec   
+
+
