@@ -59,7 +59,10 @@ kubectl create -f LogMonitorPod.yaml  -f LogMonitorService.yaml
 ```
 With this command, a new Pod is launched that consumes the log events on the logTopic and keeps them in memory to make them available to anyone requesting them through a simple HTTP request: http://clusterIP:logMonitorPort/logs
 
-Using kubectl get services you can inspect the service that is created and the port at which it is exposed. 
+Using `kubectl get services` you can inspect the service that is created and the port at which it is exposed. 
+```
+kubectl get services  --namespace=choreography
+```
 
 Now click on the plus icon and open *Select Port to View on Host 1* ; enter the port number found for the *logmonitorservice*.
 
@@ -105,14 +108,14 @@ Note: you can edit the curl request in a file and then pipe it to the shell. For
 * press esc; them type `wq`
 * type `cat curlpost | sh` to execute the post request with curl 
 
-You can now check the logs - a few will be writte in response to the Tweet. 
+You can now check the logs - a few will be written in response to the Tweet. 
 
 ## Run Microservice Workflow Launcher
 The Workflow Launcher listens to the workflowEvents Kafka Topic for events of type NewTweetEvent. Whenever it consumes one of those, it will compose a workflow event with a workflow choreography definition for that specific tweet. The data associated with the workflow is stored in the cache and thus made available to other microservices. 
 
 Run the Workflow Launcher with:
 ```
-cd ../WorklowLauncher/
+cd ../WorkflowLauncher/
 kubectl create -f WorkflowLauncherPod.yaml
 ```
 Note: the values for the environment variable KAFKA_HOST, ZOOKEEPER_PORT and REDIS_HOST and REDIS_PORT in the yaml file link this microservice to some of its dependencies.
@@ -154,11 +157,11 @@ curl -X POST \
  
 The source code for this microservices is in file 5-microservices/ValidateTweet/TweetValidator.js. In this file, the function handleWorkflowEvent is invoked whenever an event is consumed from the workflowEvents topic. 
 
-The logic in this function inspects the workflow event to find any action of the actionType that this microservice knows how to process – ValidateTweet – and with status new. If it finds such as action, it will check what the condition are that have to be fulfilled in order for this action to per performed (none at present). If an action of the right type with the right status and without unsatisfied conditions is found, the microservice will do its job and execute the action. Subsequently it will update the routing slip and publish a fresh event to the workflowEvents topic.
+The logic in this function inspects the workflow event to find any action of the actionType that this microservice knows how to process – ValidateTweet – and with status new. If it finds such as action, it will check what the conditions are that have to be fulfilled in order for this action to per performed (none at present). If an action of the right type with the right status and without unsatisfied conditions is found, the microservice will do its job and execute the action. Subsequently it will update the routing slip and publish a fresh event to the workflowEvents topic.
 
 What we see in action now is one of the promises of the microservices choreography approach: without changing a central orchestration component – because there is none – or any other microservice, we have extended the capability of our application landscape with the ability to participate in the Tweet Workflow. Before too long we will have deployed to additional microservices and at that point the entire workflow can be completed. Without any impact on existing pieces and components. 
 
-After that, we will change the workflow definition – and without changing any of the microservices have the updated workflows executed by the existing microservices. We can also take down one or more of the microservices – and after a little while start the up again, with the same or a changed implementation. While they are down, the execution of the workflows ceases. But as soon as the microservice is started, it will go an consume all pending events on the workflowEvents topic and start processing them – if it can.
+After that, we will change the workflow definition – and without changing any of the microservices have the updated workflows executed by the existing microservices. We can also take down one or more of the microservices – and after a little while start the up again, with the same or a changed implementation. While they are down, the execution of the workflows ceases. But as soon as the microservice is started, it will go and consume all pending events on the workflowEvents topic and start processing them – if it can.
 
 ## Run Microservice to Enrich Tweet
 This microservice takes the tweet and enriches it with information about the author, any acronyms and abbreviations, related tweets and many more details. Well, that was the intent. And could still happen. But for now all the enrichment that takes place is very limited indeed. Sorry about that. However, this microservice will play its designated role in the workflow execution, according to the choreography suggested by the workflow launcher.

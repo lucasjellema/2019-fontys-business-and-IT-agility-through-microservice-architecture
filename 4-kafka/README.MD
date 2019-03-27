@@ -36,7 +36,7 @@ kubectl apply -f 03-yahoo-kafka-manager/
 It will take a minute or two before the Kafka Cluster is running. The *kafka-ca1* namespace may look pretty bad for a while in the dashboard, with Pods trying to get started. Sit back, wait for a while and things will improve.
 
 ## Running Kafka Manager
-When all Pods are green in the dashboard, it is time for next moves.
+When all Pods are green in the dashboard (for namespace *kafka-ca1*), it is time for next moves.
 
 Execute:
 ```
@@ -53,7 +53,7 @@ Open the Cluster menu and click on Add Cluster. Add new cluster, and use the fol
 
 Note: this is not the creation of new Kafka cluster but instead the registration with Kafka Manager of an existing cluster.
 
-As our next step, we need to create a Topic on the Kafka Cluster. Click on Topics, the on Create. Set the name to the new topic to `event-bus`. Accept all other default settings and press Create.
+As our next step, we need to create a Topic on the Kafka Cluster. Click on Topic, then on Create. Set the name to the new topic to `event-bus`. Accept all other default settings and press Create.
 
 ## Run an Application with Kafka Interaction on Kubernetes
 Now that we have a Kafka Event Bus running on our Kubernetes Cluster, let's try it out. Let's deploy an application that can consume events from the Event Bus as well as one that publishes events to it. These two applications are completely decoupled from each other. They do not know about each other.
@@ -71,7 +71,7 @@ kubectl apply -f ./event-bus-listener/EventBusListenerPod.yaml -f ./event-bus-li
 
 kubectl apply  -f ./event-bus-publisher/EventBusPublisherPod.yaml -f ./event-bus-publisher/EventBusPublisherService.yaml
 ```
-With these commands, you will deploy to Node applications that will act as Kafka clients - for publishing to and consuming from the topic event-bus. Both applications are exposed as service as well; we can list them and find their ports.
+With these commands, you will deploy two Node applications that will act as Kafka clients - for publishing to and consuming from the topic event-bus. Both applications are exposed as service as well; we can list them and find their ports.
 
 ```
 kubectl get svc
@@ -83,11 +83,12 @@ Now click on the plus icon and open *Select Port to View on Host 1* ; enter the 
 
 We also open a window for publishing events. Click again on the plus icon and open *Select Port to View on Host 1* ; enter the port number found for the eventbuspublisherservice. Add /publish?payload=helloworld to the URL in the browser location bar. This will publish an event to the event bus.
 
-As an alternative to accessing the services through the browser, you can also use Curl:
+As an alternative to accessing the services through the browser, you can also use Curl, using a command like the following - after editing and inserting the values applicable to your environment:
 
 curl -X GET \
   'http://<Katacoda host for Event Publisher>/publish?area=belgium&candy=chocolate' \
 
+in my case this evaluates to:
 curl -X GET \
   'http://2886795330-30303-frugo04.environments.katacoda.com/publish?area=belgium&candy=chocolate' \
 
